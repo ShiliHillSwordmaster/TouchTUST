@@ -40,6 +40,7 @@ header2={
 'Upgrade-Insecure-Requests': '1',
 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36',
 }
+
 #--------------检查是否已登陆,是则注销
 def check():
 	url=("http://59.67.0.245/")
@@ -65,7 +66,6 @@ def login():
 	except ValueError:
 		print("error")
 		input()
-#html = requests.get(url)
 
 #-------------获取余额 流量使用
 def get_flow_fee():
@@ -104,3 +104,5 @@ if __name__ == "__main__":
 	check()
 	login()
 	get_flow_fee()
+	input(" ")
+	
