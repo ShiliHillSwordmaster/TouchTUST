@@ -12,8 +12,8 @@ params={
 'R7': '0'
 }
 
-params['DDDDD'] = '18011315'
-params['upass'] = '20000329'
+params['DDDDD'] = '*******'  #填入学号
+params['upass'] = '*******'  #填入密码
 
 header1={
 'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
