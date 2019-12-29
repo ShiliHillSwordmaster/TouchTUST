@@ -46,7 +46,7 @@ xuanke_datas ={
 "dealType": "2",
 "fajhh": "3742",
 "kcIds": lesson_code+"_"+term_code,
-#"kcms": "21019,36896,23398,95,49,48,49,",
+
 "sj": "0_0",
 "kclbdm":"",
 "inputCode":"",
