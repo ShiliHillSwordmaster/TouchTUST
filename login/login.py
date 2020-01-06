@@ -43,7 +43,7 @@ header2={
 
 #-----------------读取配置文件
 def read_config():
-	with open("login_config.txt","w+") as f:
+	with open("login_config.txt","r") as f:
 		xuehao = f.readline()
 		mima = f.readline()
 		if ( xuehao or mima ) == "":
