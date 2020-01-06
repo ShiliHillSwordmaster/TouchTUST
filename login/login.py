@@ -12,8 +12,8 @@ params={
 'R7': '0'
 }
 
-params['DDDDD'] = '*******'  #填入学号
-params['upass'] = '*******'  #填入密码
+params['DDDDD'] = ''
+params['upass'] = ''
 
 header1={
 'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
@@ -41,6 +41,17 @@ header2={
 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36',
 }
 
+#-----------------读取配置文件
+def read_config():
+	with open("login_config.txt","w+") as f:
+		xuehao = f.readline()
+		mima = f.readline()
+		if ( xuehao or mima ) == "":
+			return False
+		xuehao = xuehao[0:5]
+	return (xuehao,mima)
+
+
 #--------------检查是否已登陆,是则注销
 def check():
 	url=("http://59.67.0.245/")
@@ -67,13 +78,14 @@ def login():
 		print("error")
 		input()
 
+
 #-------------获取余额 流量使用
 def get_flow_fee():
 	url =("http://59.67.0.245/")
 	html = requests.get(url,headers = header2)
 	flow = re.findall(".*flow='(.*?) '.*",html.text)
 	fee = re.findall(".*fee='(.*?)'.*",html.text)
-
+	print(fee)
 	f_flow =int(flow[0])/1024
 	f_fee = (int(fee[0]) - int(fee[0])%100)/10000
 	if f_fee == 123456.78:
@@ -101,8 +113,14 @@ def save_page():
 		print("BINGO!\n")
 
 if __name__ == "__main__":		
+	config = read_config()
+	if config == False:
+		input("Invalid Config")
+		exit()
+	params['DDDDD'] = config[0]
+	params['upass'] = config[1]
+		
 	check()
 	login()
 	get_flow_fee()
-	input(" ")
-	
+	exit()
