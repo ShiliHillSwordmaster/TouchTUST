@@ -12,8 +12,6 @@ params={
 'R7': '0'
 }
 
-params['DDDDD'] = ''
-params['upass'] = ''
 
 header1={
 'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
@@ -48,7 +46,7 @@ def read_config():
 		mima = f.readline()
 		if ( xuehao or mima ) == "":
 			return False
-		xuehao = xuehao[0:5]
+		xuehao = xuehao[0:8]
 	return (xuehao,mima)
 
 
@@ -59,13 +57,15 @@ def check():
 	try:
 		html.text.index("注销页")
 	except ValueError:
-		pass
+		return False
 	else:
-		url="http://59.67.0.220/F.htm" 
-		html = requests.get(url)
-		print("logout")
-		input()
-		exit()
+		return True
+
+#-------------登出
+def logout():
+	url="http://59.67.0.220/F.htm" 
+	html = requests.get(url)
+	print("logout")
 
 #--------------提交登录
 def login():
@@ -74,8 +74,8 @@ def login():
 	
 	try:
 		html.text.index("跳转至AC传递的用户原始输入地址")
-	except ValueError:
-		print("error")
+	except ValueError as e:
+		print("error " +str(e))
 		input()
 
 
@@ -85,7 +85,7 @@ def get_flow_fee():
 	html = requests.get(url,headers = header2)
 	flow = re.findall(".*flow='(.*?) '.*",html.text)
 	fee = re.findall(".*fee='(.*?)'.*",html.text)
-	print(fee)
+	#print(fee)
 	f_flow =int(flow[0])/1024
 	f_fee = (int(fee[0]) - int(fee[0])%100)/10000
 	if f_fee == 123456.78:
@@ -119,8 +119,12 @@ if __name__ == "__main__":
 		exit()
 	params['DDDDD'] = config[0]
 	params['upass'] = config[1]
-		
-	check()
-	login()
-	get_flow_fee()
-	exit()
+	print(config[0])
+	
+	if not check():
+		login()
+		get_flow_fee()
+		exit()
+	else:
+		logout()
+		exit()
