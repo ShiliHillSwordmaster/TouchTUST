@@ -1,5 +1,6 @@
 import requests
 import re
+import time
 
 params={
 'DDDDD': '',   
@@ -76,7 +77,7 @@ def login():
 		html.text.index("跳转至AC传递的用户原始输入地址")
 	except ValueError as e:
 		print("error " +str(e))
-		input()
+		
 
 
 #-------------获取余额 流量使用
@@ -93,7 +94,7 @@ def get_flow_fee():
 	else:
 		print("已用流量：%.3f " %f_flow)
 		print("余额：",f_fee)  
-	input()
+	
 
 
 #-------------测试保留页面	
@@ -124,7 +125,9 @@ if __name__ == "__main__":
 	if not check():
 		login()
 		get_flow_fee()
+		time.sleep(2)
 		exit()
 	else:
 		logout()
+		time.sleep(2)
 		exit()
