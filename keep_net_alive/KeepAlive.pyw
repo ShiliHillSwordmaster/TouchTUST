@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+#################################################
+#	KeepAlive.pyw						   ###  #
+#	by Oberon								### #
+#	2020-03-01								 ####
+#	https://github.com/ShiliHillSwordmaster	  ####
+###################################################
+
+
+
 import requests
 import re
 import time
@@ -24,7 +34,7 @@ header={
 'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
 }
 
-params={
+param={
 'DDDDD': '',   
 'upass': '',  
 'R1': '0',
@@ -99,7 +109,7 @@ class mainWindow(QObject):
 	def _retranslateUi(self, windowFrame):
 		_translate = QtCore.QCoreApplication.translate
 		windowFrame.setWindowTitle(_translate("mainWindow", "keep alive!"))
-		windowFrame.setWindowIcon(QtGui.QIcon(r'C:\Users\Oberon\Desktop\timg.png'))#* 在主界面标题前面插入图片，需要图片和程序在同一路径。
+		windowFrame.setWindowIcon(QtGui.QIcon(r'fist.png'))#在主界面标题前面插入图片
 		
 	def _initUI(self):
 		self.backend = BackendThread()	# 创建线程
@@ -133,11 +143,11 @@ class BackendThread(QObject):
 		self.update_date.emit(s)
 		
 	def setParams(self):
-		global params
+		global param
 		data = self.readData()
 		if data == False:
 			return 1
-		self.param = params
+		self.param = param
 		try:
 			self.param['DDDDD'] = data[0]
 			self.param['upass'] = data[1]
@@ -149,24 +159,25 @@ class BackendThread(QObject):
 		a = self.setParams()
 		while not a == 0:
 			if a == 1:
-				self.labelPrint("      file lost")
+				self.labelPrint(" data file lost")
 				a = self.setParams()
 			elif a == 2:
-				self.labelPrint("invalid file")
+				self.labelPrint("     invalid file")
 				a = self.setParams()
-		t_s=time.time()
 		while True:
-			t_e=time.time()
 			if self.campusNetIsOk() :
-				if not self.netIsOk()  : #如果没网
-					self.labelPrint("    lost connection")	#显示没网
-					#self.labelPrint(params['upass'])		#
-					self.connectCampusNet()					#尝试联网
-					t_s = time.time()
+				if not self.netIsOk()  : #如果校园网可用且没网
+					self.labelPrint("    lost connection")		#显示失去校园网连接
+					c = self.connectCampusNet()					#尝试连接校园网
+					self.labelPrint(c)							#显示登录结果
 				else:
 					pass
 			else:
-				self.labelPrint("    lost campus net")
+				if not self.netIsOk()  : #如果校园网不可用且没网
+					self.labelPrint("    invalid network")		#显示凉凉
+					#self.labelPrint(params['upass'])			#尝试联网
+				else:
+					self.labelPrint("    invalid network")		#虽然没连校园网但是有网上
 			time.sleep(0.5)
 			
 	def campusNetIsOk(self):		#检查是否连接校园网
@@ -181,7 +192,6 @@ class BackendThread(QObject):
 			else:
 				return False
 		except Exception as e:
-			#print("an error"+str(e))
 			return False	
 
 	def readData(self):			#读取用户数据
@@ -214,18 +224,24 @@ class BackendThread(QObject):
 		global param ,header
 		url="http://59.67.0.245/a70.htm" 
 		try:
-			html=requests.post(url,data=params,headers = header , timeout = 1)
+			html=requests.post(url,data=params,headers = header , timeout = 1)	#提交数据
 		except:
-			self.labelPrint("	lost connection" , end = "")
+			#self.labelPrint("	lost connection" , end = "")
 			time.sleep(0.5)
+			return "	lost connection"
 		try:
-			html.text.index("跳转至AC传递的用户原始输入地址")
+			html.text.index("跳转至AC传递的用户原始输入地址")	#检查是否登录成功
+			return str(param["DDDDD"])+" connected!"
 		except ValueError:
-			self.labelPrint("	login failed		 ")
+			#self.labelPrint("invalid account or password")
+			time.sleep(1)
+			return "invalid account or password"
 		else:
 			pass
+		return " Unkown Error..."
+		
 			
-	def dataIsExist(self):	#判断数据文件是否存在
+	def dataIsExist(self):		#检查数据文件是否存在
 		path = "_user.data"
 		if not os.path.exists(path):
 			path = r"C:\Users\Public\Documents\_user.data"
